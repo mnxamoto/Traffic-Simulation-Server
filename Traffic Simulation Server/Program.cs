@@ -22,8 +22,8 @@ namespace Traffic_Simulation_Server
         static void Main(string[] args)
         {
             // Устанавливаем для сокета локальную конечную точку
-            IPHostEntry ipHost = getIpHost(); //Выбор Ip хоста
-            IPAddress ipAddr = ipHost.AddressList.FirstOrDefault((a) => a.AddressFamily == AddressFamily.InterNetwork);
+            IPHostEntry ipHost = Dns.GetHostEntry("127.0.0.1"); //Выбор Ip хоста
+            IPAddress ipAddr = IPAddress.Parse("127.0.0.1"); // ipHost.AddressList.FirstOrDefault((a) => a.AddressFamily == AddressFamily.InterNetwork);
             IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, 1001);
 
             Console.Write($"[{DateTime.Now:HH:mm:ss}] Лог сервера:\r\n");
@@ -35,11 +35,6 @@ namespace Traffic_Simulation_Server
 
             try
             {
-                Task.Factory.StartNew(() =>
-                {
-                    program.ReceiveAndSend();
-                }); //Создание и запуск нового потока
-
                 sListener.Bind(ipEndPoint); //Связывает сокет с локальной конечной точкой
 
                 // Начинаем слушать новые соединения
@@ -48,12 +43,17 @@ namespace Traffic_Simulation_Server
                 //Программа приостанавливается, ожидая входящее соединение
                 client = sListener.Accept(); //Создание нового клиента
 
+                Task.Factory.StartNew(() =>
+                {
+                    program.ReceiveAndSend();
+                }); //Создание и запуск нового потока
+
                 Console.Write($"Соединение с [{client.RemoteEndPoint}] установлено");
             }
             catch (Exception ex)
             {
                 Console.Write(ex.Message + "\r\n" + ex.StackTrace + "\r\n");
-                File.AppendAllText(Directory.GetCurrentDirectory() + "\\Логи\\" + DateTime.Now.ToString("dd.MM.yyyy") + ".txt", ex.Message + "\r\n" + ex.StackTrace + "\r\n");
+                //File.AppendAllText(Directory.GetCurrentDirectory() + "\\Логи\\" + DateTime.Now.ToString("dd.MM.yyyy") + ".txt", ex.Message + "\r\n" + ex.StackTrace + "\r\n");
             }
             finally
             {
@@ -139,8 +139,9 @@ namespace Traffic_Simulation_Server
                 catch (Exception ex)
                 {
                     Console.Write(ex.Message + "\r\n" + ex.StackTrace + "\r\n");
-                    File.AppendAllText(Directory.GetCurrentDirectory() + "\\Логи\\" + DateTime.Now.ToString("dd.MM.yyyy") + ".txt", ex.Message + "\r\n" + ex.StackTrace + "\r\n");
-                    //clients.RemoveAt(i);
+                    //File.AppendAllText(Directory.GetCurrentDirectory() + "\\Логи\\" + DateTime.Now.ToString("dd.MM.yyyy") + ".txt", ex.Message + "\r\n" + ex.StackTrace + "\r\n");
+                    Main(null);
+                    return;
                 }
 
             }
@@ -150,7 +151,7 @@ namespace Traffic_Simulation_Server
         {
             byte[] bytes = new byte[1024];
             int bytesRec = client.Receive(bytes); //Забираем массив байт из буфера входящего потока
-            string data = Encoding.GetEncoding(866).GetString(bytes, 0, bytesRec); //Декодируем в текст (Json)
+            string data = Encoding.GetEncoding("Unicode").GetString(bytes, 0, bytesRec); //Декодируем в текст (Json)
             Packet packet = JsonConvert.DeserializeObject<Packet>(data); //Десериализуем из Json в Packet
 
             return packet;
