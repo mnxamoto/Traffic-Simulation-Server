@@ -17,7 +17,7 @@ namespace Traffic_Simulation_Server
             while (carsQueue.Count > 0)
             {
                 CarGrid car = carsQueue.Dequeue();
-                Data.GetInstance().Cars.Add(car);
+                cars.Add(car);
 
                 for (int i = 0; i < 20; i++)
                 {

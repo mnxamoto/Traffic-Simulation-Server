@@ -19,6 +19,7 @@ namespace Traffic_Simulation_Server
         }
 
         public CrossroadsCircle[,] CrossroadsCircleArray { get; set; }
+        public Crossroads[,] crossroadsArray { get; set; }
         public List<Car> Cars { get; set; }
     }
 }

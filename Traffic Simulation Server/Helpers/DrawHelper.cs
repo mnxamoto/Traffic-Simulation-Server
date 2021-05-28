@@ -41,6 +41,8 @@ namespace Traffic_Simulation_Server
                 }
             }
 
+            Data.GetInstance().crossroadsArray = crossroadsArray;
+
             Point start;
             Point end;
             Size size;

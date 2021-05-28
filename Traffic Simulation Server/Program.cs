@@ -126,13 +126,14 @@ namespace Traffic_Simulation_Server
                             task.Start();
 
                             break;
-                        case Command.Get:
-                            //TODO: Сделать возрат текущего состояния
+                        case Command.GetCrossroadses:
+                            Send(Command.SendCrossroadses, Data.GetInstance().crossroadsArray);
                             break;
-                        case Command.Stop:
-                            WorkHelper.isWorkedTask = false;
+                        case Command.GetCars:
+                            
                             break;
                         default:
+                            WorkHelper.isWorkedTask = false;
                             break;
                     }
                 }
@@ -144,6 +145,27 @@ namespace Traffic_Simulation_Server
                     return;
                 }
 
+            }
+        }
+
+        public void Send(Command command, object messageObject)
+        {
+            string messageString = JsonConvert.SerializeObject(messageObject);
+
+            Packet packet = new Packet();
+            packet.Command = command;
+            packet.data = messageString;
+
+            string packetString = JsonConvert.SerializeObject(packet);
+            byte[] packetBytes = Encoding.GetEncoding("Unicode").GetBytes(packetString);
+
+            try
+            {
+                client.Send(packetBytes);
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
 
