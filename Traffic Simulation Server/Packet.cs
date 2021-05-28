@@ -25,6 +25,7 @@ namespace Traffic_Simulation_Server
         Start,
         GetCrossroadses,
         SendCrossroadses,
-        GetCars
+        GetCars,
+        SendCars
     }
 }

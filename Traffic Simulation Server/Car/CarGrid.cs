@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
@@ -7,10 +8,13 @@ namespace Traffic_Simulation_Server
 {
     public class CarGrid : Car
     {
+        [JsonIgnore]
         public new CrossroadsGrid Crossroads { get; set; }
         public DirectionMotion DirectionMotion { get; set; }
         public DirectionMotion DirectionMotionNext { get; set; }
+        [JsonIgnore]
         public Road Road { get; set; }
+        [JsonIgnore]
         private Random random;
 
         public CarGrid(CrossroadsGrid crossroads, int delayStep, int step)

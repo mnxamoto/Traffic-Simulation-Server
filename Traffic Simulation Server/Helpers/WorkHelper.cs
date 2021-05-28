@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace Traffic_Simulation_Server
 {
@@ -31,6 +32,7 @@ namespace Traffic_Simulation_Server
             while (isWorkedTask)
             {
                 MotionCars(Data.GetInstance().Cars);
+                Thread.Sleep(1);
 
                 DelayСounter++;
 

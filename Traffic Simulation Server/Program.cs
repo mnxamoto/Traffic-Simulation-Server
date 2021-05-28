@@ -130,7 +130,7 @@ namespace Traffic_Simulation_Server
                             Send(Command.SendCrossroadses, Data.GetInstance().crossroadsArray);
                             break;
                         case Command.GetCars:
-                            
+                            Send(Command.SendCars, Data.GetInstance().Cars);
                             break;
                         default:
                             WorkHelper.isWorkedTask = false;
