@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
@@ -8,6 +9,7 @@ namespace Traffic_Simulation_Server
     public class CarCircle : Car
     {
         public int Angle { get; set; }
+        [JsonIgnore]
         public DirectionMotionCicle DirectionMotionCicle { get; set; }
         public Ring Ring { get; set; }
 
@@ -17,7 +19,7 @@ namespace Traffic_Simulation_Server
         {
             iGrid = i;
             kGrid = k;
-            Crossroads = Data.GetInstance().CrossroadsCircleArray[i, k];
+            Crossroads = Data.GetInstance().CrossroadsArray[i, k];
             Crossroads.Cars.Add(this);
             Step = step;
             Angle = angle;
@@ -57,25 +59,25 @@ namespace Traffic_Simulation_Server
                             kGrid--;
                             if (kGrid < 0)
                             {
-                                kGrid = Data.GetInstance().CrossroadsCircleArray.GetLength(1) - 1;
+                                kGrid = Data.GetInstance().CrossroadsArray.GetLength(1) - 1;
                             }
                             Angle = 275;
                             break;
                         case DirectionMotionCicle.Right:
                             iGrid++;
-                            iGrid %= Data.GetInstance().CrossroadsCircleArray.GetLength(0);
+                            iGrid %= Data.GetInstance().CrossroadsArray.GetLength(0);
                             Angle = 185;
                             break;
                         case DirectionMotionCicle.Down:
                             kGrid++;
-                            kGrid %= Data.GetInstance().CrossroadsCircleArray.GetLength(1);
+                            kGrid %= Data.GetInstance().CrossroadsArray.GetLength(1);
                             Angle = 95;
                             break;
                         case DirectionMotionCicle.Left:
                             iGrid--;
                             if (iGrid < 0)
                             {
-                                iGrid = Data.GetInstance().CrossroadsCircleArray.GetLength(1) - 1;
+                                iGrid = Data.GetInstance().CrossroadsArray.GetLength(1) - 1;
                             }
                             Angle = 5;
                             break;
@@ -84,7 +86,7 @@ namespace Traffic_Simulation_Server
                     }
 
                     Crossroads.Cars.Remove(this);
-                    Crossroads = Data.GetInstance().CrossroadsCircleArray[iGrid, kGrid];
+                    Crossroads = Data.GetInstance().CrossroadsArray[iGrid, kGrid];
                     Crossroads.Cars.Add(this);
                     ChoiceDirection();
                 }

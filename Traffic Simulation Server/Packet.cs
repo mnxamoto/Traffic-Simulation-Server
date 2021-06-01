@@ -22,7 +22,8 @@ namespace Traffic_Simulation_Server
 
     public enum Command
     {
-        Start,
+        StartGrid,
+        StartCircle,
         GetCrossroadses,
         SendCrossroadses,
         GetCars,

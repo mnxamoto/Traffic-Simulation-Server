@@ -41,7 +41,7 @@ namespace Traffic_Simulation_Server
                 }
             }
 
-            Data.GetInstance().crossroadsArray = crossroadsArray;
+            Data.GetInstance().CrossroadsArray = crossroadsArray;
 
             Point start;
             Point end;
@@ -79,7 +79,7 @@ namespace Traffic_Simulation_Server
             return crossroadsArray;
         }
 
-        public static void DrawCircles(int countRow, int countColumn)
+        public static Crossroads[,] DrawCircles(int countRow, int countColumn)
         {
             //Смещение относительно начала координат
             int xOffset = 50;
@@ -99,7 +99,9 @@ namespace Traffic_Simulation_Server
                 }
             }
 
-            Data.GetInstance().CrossroadsCircleArray = crossroadsCircleArray;
+            Data.GetInstance().CrossroadsArray = crossroadsCircleArray;
+
+            return Data.GetInstance().CrossroadsArray;
         }
 
         public static int CalculateDistance(Point p1, Point p2)

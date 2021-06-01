@@ -103,11 +103,13 @@ namespace Traffic_Simulation_Server
                     //...получаем пакет из буфера входящего потока
                     Packet packet = GetPacket();
 
+                    StartInfo info;
+
                     //В зависимости от команды, выполняется то или иное действие
                     switch (packet.Command)
                     {
-                        case Command.Start:
-                            StartInfo info = JsonConvert.DeserializeObject<StartInfo>(packet.data);
+                        case Command.StartGrid:
+                            info = JsonConvert.DeserializeObject<StartInfo>(packet.data);
                             CrossroadsGrid[,] crossroadsArray = DrawHelper.DrawGrid(info.countRow, info.countColumm, info.useTrafficLight);
                             Queue<CarGrid> carsQueue = new Queue<CarGrid>();
 
@@ -126,8 +128,32 @@ namespace Traffic_Simulation_Server
                             task.Start();
 
                             break;
+                        case Command.StartCircle:
+                            info = JsonConvert.DeserializeObject<StartInfo>(packet.data);
+                            DrawHelper.DrawCircles(info.countRow, info.countColumm);
+                            //CrossroadsCircle[,] CrossroadsCircleArray = DrawHelper.DrawCircles(info.countRow, info.countColumm);
+                            //Queue<CarCircle> carsCircleQueue = new Queue<CarCircle>();
+                            List<Car> cars = new List<Car>();
+
+                            for (int i = 0; i < info.countCar; i++)
+                            {
+                                //CrossroadsCircle crossroads = crossroadsArray[0, i % info.countRow];
+                                CarCircle car = new CarCircle(0, i % info.countRow, random.Next(info.minSpeed, info.maxSpeed), 1, 0);
+                                cars.Add(car);
+                            }
+
+                            Data.GetInstance().Cars = cars;
+
+                            task = new Task(() =>
+                            {
+                                WorkHelper.WorkCircles(Data.GetInstance().Cars);
+                            });
+
+                            task.Start();
+
+                            break;
                         case Command.GetCrossroadses:
-                            Send(Command.SendCrossroadses, Data.GetInstance().crossroadsArray);
+                            Send(Command.SendCrossroadses, Data.GetInstance().CrossroadsArray);
                             break;
                         case Command.GetCars:
                             Send(Command.SendCars, Data.GetInstance().Cars);

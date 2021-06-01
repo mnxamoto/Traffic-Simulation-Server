@@ -45,6 +45,8 @@ namespace Traffic_Simulation_Server
 
                     DelayСounter = 0;
                 }
+
+                Thread.Sleep(1);
             }
         }
 
@@ -58,7 +60,6 @@ namespace Traffic_Simulation_Server
 
         public static void WorkCircles(List<Car> cars)
         {
-
             isWorkedTask = true;
 
             while (isWorkedTask)
@@ -67,6 +68,8 @@ namespace Traffic_Simulation_Server
                 {
                     car.MakeStep();
                 }
+
+                Thread.Sleep(1);
             }
         }
     }
