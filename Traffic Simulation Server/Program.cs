@@ -21,8 +21,7 @@ namespace Traffic_Simulation_Server
 
         static void Main(string[] args)
         {
-            // Устанавливаем для сокета локальную конечную точку
-            IPHostEntry ipHost = Dns.GetHostEntry("127.0.0.1"); //Выбор Ip хоста
+            
             IPAddress ipAddr = IPAddress.Parse("127.0.0.1"); // ipHost.AddressList.FirstOrDefault((a) => a.AddressFamily == AddressFamily.InterNetwork);
             IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, 1001);
 
@@ -53,7 +52,6 @@ namespace Traffic_Simulation_Server
             catch (Exception ex)
             {
                 Console.Write(ex.Message + "\r\n" + ex.StackTrace + "\r\n");
-                //File.AppendAllText(Directory.GetCurrentDirectory() + "\\Логи\\" + DateTime.Now.ToString("dd.MM.yyyy") + ".txt", ex.Message + "\r\n" + ex.StackTrace + "\r\n");
             }
             finally
             {
@@ -131,13 +129,11 @@ namespace Traffic_Simulation_Server
                         case Command.StartCircle:
                             info = JsonConvert.DeserializeObject<StartInfo>(packet.data);
                             DrawHelper.DrawCircles(info.countRow, info.countColumm);
-                            //CrossroadsCircle[,] CrossroadsCircleArray = DrawHelper.DrawCircles(info.countRow, info.countColumm);
-                            //Queue<CarCircle> carsCircleQueue = new Queue<CarCircle>();
+                           
                             List<Car> cars = new List<Car>();
 
                             for (int i = 0; i < info.countCar; i++)
                             {
-                                //CrossroadsCircle crossroads = crossroadsArray[0, i % info.countRow];
                                 CarCircle car = new CarCircle(0, i % info.countRow, random.Next(info.minSpeed, info.maxSpeed), 1, 0);
                                 cars.Add(car);
                             }
@@ -158,6 +154,9 @@ namespace Traffic_Simulation_Server
                         case Command.GetCars:
                             Send(Command.SendCars, Data.GetInstance().Cars);
                             break;
+                        case Command.Stop:
+                            WorkHelper.isWorkedTask = false;
+                            break;
                         default:
                             WorkHelper.isWorkedTask = false;
                             break;
@@ -166,7 +165,6 @@ namespace Traffic_Simulation_Server
                 catch (Exception ex)
                 {
                     Console.Write(ex.Message + "\r\n" + ex.StackTrace + "\r\n");
-                    //File.AppendAllText(Directory.GetCurrentDirectory() + "\\Логи\\" + DateTime.Now.ToString("dd.MM.yyyy") + ".txt", ex.Message + "\r\n" + ex.StackTrace + "\r\n");
                     Main(null);
                     return;
                 }

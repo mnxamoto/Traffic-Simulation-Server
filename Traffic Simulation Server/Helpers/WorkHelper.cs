@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Traffic_Simulation_Server
 {
@@ -26,19 +27,40 @@ namespace Traffic_Simulation_Server
                 }
             }
 
-            int DelayСounter = 1000;
             Data.GetInstance().Cars = cars;
+            Data.GetInstance().CrossroadsArray = crossroadsArray;
+
+            Task.Factory.StartNew(() =>
+            {
+                WorkCars(Data.GetInstance().Cars);
+            });
+
+            Task.Factory.StartNew(() =>
+            {
+                WorkCrossroads(Data.GetInstance().CrossroadsArray);
+            });
+        }
+
+        private static void WorkCars(List<Car> cars)
+        {
+            while (isWorkedTask)
+            {
+                MotionCars(cars);
+                Thread.Sleep(1);
+            }
+        }
+
+        private static void WorkCrossroads(Crossroads[,] crossroadsArray)
+        {
+            int DelayСounter = 1000;
 
             while (isWorkedTask)
             {
-                MotionCars(Data.GetInstance().Cars);
-                Thread.Sleep(1);
-
                 DelayСounter++;
 
                 if (DelayСounter > 100)
                 {
-                    foreach (var crossroads in crossroadsArray)
+                    foreach (CrossroadsGrid crossroads in crossroadsArray)
                     {
                         crossroads.ChangePhase();
                     }
@@ -46,16 +68,16 @@ namespace Traffic_Simulation_Server
                     DelayСounter = 0;
                 }
 
-                Thread.Sleep(1);
+                Thread.Sleep(10);
             }
         }
 
         private static void MotionCars(List<Car> cars)
         {
-            foreach (var car in cars)
-            {
-                car.MakeStep();
-            }
+            Parallel.ForEach(cars, car => 
+            { 
+                car.MakeStep(); 
+            });
         }
 
         public static void WorkCircles(List<Car> cars)

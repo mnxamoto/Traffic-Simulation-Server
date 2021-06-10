@@ -103,12 +103,6 @@ namespace Traffic_Simulation_Server
                 if (Current == Crossroads.Point)
                 {
                     ChoiceDirection();
-
-                    /*
-                    Crossroads.Cars.Remove(this);
-                    Crossroads = Coordinates.GetInstance().CrossroadsArray[iGrid, kGrid];
-                    Crossroads.Cars.Add(this);*/
-
                     DelayСounter = 0;
                     return;
                 }

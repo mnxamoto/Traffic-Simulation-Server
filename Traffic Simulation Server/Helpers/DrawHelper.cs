@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Cudafy;
+using Cudafy.Host;
+using Cudafy.Translator;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
