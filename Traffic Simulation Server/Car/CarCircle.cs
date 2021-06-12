@@ -11,6 +11,8 @@ namespace Traffic_Simulation_Server
         public int Angle { get; set; }
         [JsonIgnore]
         public DirectionMotionCicle DirectionMotionCicle { get; set; }
+        [JsonIgnore]
+        public bool IsChangeCrossRoads { get; set; }
         public Ring Ring { get; set; }
 
         private Random random;
@@ -32,9 +34,71 @@ namespace Traffic_Simulation_Server
         public override void MakeStep()
         {
             DelayСounter += DelayStep;
+            Point offset;
 
             if (DelayСounter > DelayMax)
             {
+                if (IsChangeCrossRoads)
+                {
+                    offset = Current;
+                    Point endCrossroads = Crossroads.Point;
+
+                    switch (DirectionMotionCicle)
+                    {
+                        case DirectionMotionCicle.Up:
+                            offset.Y -= Step;
+                            endCrossroads.Y += 40;
+                            Angle = 0;
+                            break;
+                        case DirectionMotionCicle.Right:
+                            offset.X += Step;
+                            endCrossroads.X -= 40;
+                            Angle = 270;
+                            break;
+                        case DirectionMotionCicle.Down:
+                            offset.Y += Step;
+                            endCrossroads.Y -= 40;
+                            Angle = 180;
+                            break;
+                        case DirectionMotionCicle.Left:
+                            offset.X -= Step;
+                            endCrossroads.X += 40;
+                            Angle = 90;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    Current = offset;
+
+                    if (Current == )
+                    {
+                        IsChangeCrossRoads = false;
+
+                        switch (DirectionMotionCicle)
+                        {
+                            case DirectionMotionCicle.Up:
+                                Angle = 275;
+                                break;
+                            case DirectionMotionCicle.Right:
+                                Angle = 185;
+                                break;
+                            case DirectionMotionCicle.Down:
+                                Angle = 95;
+                                break;
+                            case DirectionMotionCicle.Left:
+                                Angle = 5;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        ChoiceDirection();
+                    }
+
+                    return;
+                }
+
                 if (CheckCollision())
                 {
                     DelayСounter = 0;
@@ -61,17 +125,14 @@ namespace Traffic_Simulation_Server
                             {
                                 kGrid = Data.GetInstance().CrossroadsArray.GetLength(1) - 1;
                             }
-                            Angle = 275;
                             break;
                         case DirectionMotionCicle.Right:
                             iGrid++;
                             iGrid %= Data.GetInstance().CrossroadsArray.GetLength(0);
-                            Angle = 185;
                             break;
                         case DirectionMotionCicle.Down:
                             kGrid++;
                             kGrid %= Data.GetInstance().CrossroadsArray.GetLength(1);
-                            Angle = 95;
                             break;
                         case DirectionMotionCicle.Left:
                             iGrid--;
@@ -79,7 +140,6 @@ namespace Traffic_Simulation_Server
                             {
                                 iGrid = Data.GetInstance().CrossroadsArray.GetLength(1) - 1;
                             }
-                            Angle = 5;
                             break;
                         default:
                             break;
@@ -88,13 +148,15 @@ namespace Traffic_Simulation_Server
                     Crossroads.Cars.Remove(this);
                     Crossroads = Data.GetInstance().CrossroadsArray[iGrid, kGrid];
                     Crossroads.Cars.Add(this);
-                    ChoiceDirection();
+                    //ChoiceDirection();
+
+                    return;
                 }
 
                 Angle %= 360;
                 double angleRadian = (360 - Angle) * Math.PI / 180;
 
-                Point offset = new Point();
+                offset = new Point();
                 offset.X = Crossroads.Point.X + (int)((int)Ring * Math.Cos(angleRadian));
                 offset.Y = Crossroads.Point.Y + (int)((int)Ring * Math.Sin(angleRadian));
 
