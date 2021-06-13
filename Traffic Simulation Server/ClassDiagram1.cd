@@ -175,7 +175,7 @@
   <Class Name="Traffic_Simulation_Server.CarCircle">
     <Position X="10.75" Y="6.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAQQAAAAAAAABAAgAAAAAAAAAACAAEQAAAAAAAA=</HashCode>
+      <HashCode>QAAAAAQQAAAAAAAABAAgAAAAAAAAAACAAEQAAAAAAAA=</HashCode>
       <FileName>Car\CarCircle.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>

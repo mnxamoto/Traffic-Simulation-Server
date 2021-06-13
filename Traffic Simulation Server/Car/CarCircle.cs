@@ -27,8 +27,9 @@ namespace Traffic_Simulation_Server
             Angle = angle;
             DelayStep = delayStep;
             random = new Random();
-            DirectionMotionCicle = (DirectionMotionCicle)Enum.GetValues(typeof(DirectionMotionCicle)).GetValue(random.Next(0, 4));
+            ChoiceDirection();
             Ring = Ring.FIrst;
+            IsChangeCrossRoads = false;
         }
 
         public override void MakeStep()
@@ -42,27 +43,32 @@ namespace Traffic_Simulation_Server
                 {
                     offset = Current;
                     Point endCrossroads = Crossroads.Point;
+                    int distance = 25;
 
                     switch (DirectionMotionCicle)
                     {
                         case DirectionMotionCicle.Up:
                             offset.Y -= Step;
-                            endCrossroads.Y += 40;
+                            endCrossroads.Y += distance;
+                            endCrossroads.X += 4;
                             Angle = 0;
                             break;
                         case DirectionMotionCicle.Right:
                             offset.X += Step;
-                            endCrossroads.X -= 40;
+                            endCrossroads.X -= distance;
+                            endCrossroads.Y += 4;
                             Angle = 270;
                             break;
                         case DirectionMotionCicle.Down:
                             offset.Y += Step;
-                            endCrossroads.Y -= 40;
+                            endCrossroads.Y -= distance;
+                            endCrossroads.X -= 4;
                             Angle = 180;
                             break;
                         case DirectionMotionCicle.Left:
                             offset.X -= Step;
-                            endCrossroads.X += 40;
+                            endCrossroads.X += distance;
+                            endCrossroads.Y -= 4;
                             Angle = 90;
                             break;
                         default:
@@ -71,7 +77,7 @@ namespace Traffic_Simulation_Server
 
                     Current = offset;
 
-                    if (Current == )
+                    if (Current == endCrossroads)
                     {
                         IsChangeCrossRoads = false;
 
@@ -121,25 +127,15 @@ namespace Traffic_Simulation_Server
                     {
                         case DirectionMotionCicle.Up:
                             kGrid--;
-                            if (kGrid < 0)
-                            {
-                                kGrid = Data.GetInstance().CrossroadsArray.GetLength(1) - 1;
-                            }
                             break;
                         case DirectionMotionCicle.Right:
                             iGrid++;
-                            iGrid %= Data.GetInstance().CrossroadsArray.GetLength(0);
                             break;
                         case DirectionMotionCicle.Down:
                             kGrid++;
-                            kGrid %= Data.GetInstance().CrossroadsArray.GetLength(1);
                             break;
                         case DirectionMotionCicle.Left:
                             iGrid--;
-                            if (iGrid < 0)
-                            {
-                                iGrid = Data.GetInstance().CrossroadsArray.GetLength(1) - 1;
-                            }
                             break;
                         default:
                             break;
@@ -150,6 +146,7 @@ namespace Traffic_Simulation_Server
                     Crossroads.Cars.Add(this);
                     //ChoiceDirection();
 
+                    IsChangeCrossRoads = true;
                     return;
                 }
 
@@ -190,8 +187,42 @@ namespace Traffic_Simulation_Server
 
         public override void ChoiceDirection()
         {
-            DirectionMotionCicle = (DirectionMotionCicle)Enum.GetValues(typeof(DirectionMotionCicle)).GetValue(random.Next(0, 4));
             Ring = Ring.FIrst;
+
+            do
+            {
+                DirectionMotionCicle = (DirectionMotionCicle)Enum.GetValues(typeof(DirectionMotionCicle)).GetValue(random.Next(0, 4));
+
+                switch (DirectionMotionCicle)
+                {
+                    case DirectionMotionCicle.Up:
+                        if ((kGrid - 1) >= 0)
+                        {
+                            return;
+                        }
+                        break;
+                    case DirectionMotionCicle.Right:
+                        if ((iGrid + 1) < Data.GetInstance().CrossroadsArray.GetLength(0))
+                        {
+                            return;
+                        }
+                        break;
+                    case DirectionMotionCicle.Down:
+                        if ((kGrid + 1) < Data.GetInstance().CrossroadsArray.GetLength(1))
+                        {
+                            return;
+                        }
+                        break;
+                    case DirectionMotionCicle.Left:
+                        if ((iGrid - 1) >= 0)
+                        {
+                            return;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            } while (true);
         }
     }
 
